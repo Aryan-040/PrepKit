@@ -266,6 +266,14 @@ The batch runner processes cases sequentially. Five cases complete within 15 min
 
 ## Architecture
 
+### System Overview
+
+The following diagram shows the runtime architecture of PrepKit, including core components, trust boundaries, and the primary data flow:
+
+![PrepKit Architecture](docs/images/architecture.png)
+
+*Interactive version: [View full diagram](.archify/architecture-prepkit-20261008-132754/prepkit.html)*
+
 ### Project Structure
 
 The project uses **npm workspaces** with two main packages:

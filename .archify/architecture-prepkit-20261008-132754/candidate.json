@@ -1,0 +1,312 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "PrepKit Runtime Architecture",
+    "subtitle": "AI-powered interview prep kit generation system",
+    "output": ".archify/architecture-prepkit-20261008-132754/prepkit.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/Aryan-040/PrepKit",
+      "revision": "ccb2868669b41f1c3eeab9d3e09645312f019cb7"
+    }
+  },
+  "components": [
+    {
+      "id": "user",
+      "type": "external",
+      "label": "User",
+      "sublabel": "Browser",
+      "pos": [40, 300],
+      "size": [120, 64],
+      "sources": [
+        { "path": "frontend/app/(app)/create/page.tsx", "line": 1 }
+      ]
+    },
+    {
+      "id": "nextjs",
+      "type": "frontend",
+      "label": "Next.js 14",
+      "sublabel": "App Router + SSR",
+      "pos": [250, 300],
+      "size": [130, 64],
+      "tag": "React 18",
+      "sources": [
+        { "path": "frontend/package.json", "line": 15 },
+        { "path": "frontend/app/layout.tsx", "line": 1 }
+      ]
+    },
+    {
+      "id": "jwt-auth",
+      "type": "security",
+      "label": "JWT Auth",
+      "sublabel": "Bearer tokens",
+      "pos": [250, 110],
+      "size": [130, 64],
+      "tag": "HS256",
+      "sources": [
+        { "path": "backend/src/middleware/authenticate.ts", "line": 1 }
+      ]
+    },
+    {
+      "id": "express",
+      "type": "backend",
+      "label": "Express API",
+      "sublabel": "REST + SSE",
+      "pos": [460, 300],
+      "size": [130, 64],
+      "sources": [
+        { "path": "backend/src/app.ts", "line": 1 },
+        { "path": "backend/api/index.ts", "line": 1 }
+      ]
+    },
+    {
+      "id": "pipeline",
+      "type": "backend",
+      "label": "Extraction Pipeline",
+      "sublabel": "11-stage LLM chain",
+      "pos": [670, 300],
+      "size": [150, 64],
+      "sources": [
+        { "path": "backend/src/services/extractionPipeline.ts", "line": 1 }
+      ]
+    },
+    {
+      "id": "mongodb",
+      "type": "database",
+      "label": "MongoDB",
+      "sublabel": "Kit documents",
+      "pos": [460, 490],
+      "size": [130, 64],
+      "sources": [
+        { "path": "backend/src/models/Kit.ts", "line": 1 },
+        { "path": "backend/src/db.ts", "line": 1 }
+      ]
+    },
+    {
+      "id": "crawler",
+      "type": "backend",
+      "label": "Web Crawler",
+      "sublabel": "BFS + scoring",
+      "pos": [920, 140],
+      "size": [130, 64],
+      "tag": "Cheerio",
+      "sources": [
+        { "path": "backend/src/services/crawler.ts", "line": 1 }
+      ]
+    },
+    {
+      "id": "llm",
+      "type": "external",
+      "label": "LLM Provider",
+      "sublabel": "Gemini / Groq",
+      "pos": [920, 300],
+      "size": [130, 64],
+      "sources": [
+        { "path": "backend/src/services/llmClient.ts", "line": 1 },
+        { "path": "backend/src/services/llmAdapters/gemini.ts", "line": 1 }
+      ]
+    },
+    {
+      "id": "research",
+      "type": "backend",
+      "label": "Research Agent",
+      "sublabel": "Interview data",
+      "pos": [920, 460],
+      "size": [130, 64],
+      "tag": "DuckDuckGo",
+      "sources": [
+        { "path": "backend/src/services/researchAgent.ts", "line": 1 }
+      ]
+    },
+    {
+      "id": "company-sites",
+      "type": "external",
+      "label": "Company Sites",
+      "sublabel": "Target websites",
+      "pos": [1140, 140],
+      "size": [130, 64]
+    },
+    {
+      "id": "search-apis",
+      "type": "external",
+      "label": "Search APIs",
+      "sublabel": "Glassdoor, Reddit",
+      "pos": [1140, 460],
+      "size": [130, 64]
+    },
+    {
+      "id": "vercel",
+      "type": "cloud",
+      "label": "Vercel",
+      "sublabel": "Serverless deployment",
+      "pos": [250, 490],
+      "size": [130, 64],
+      "tag": "Edge + Functions",
+      "sources": [
+        { "path": "vercel.json", "line": 1 }
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "security-group",
+      "label": "Authenticated Zone",
+      "wraps": ["express", "pipeline", "mongodb"]
+    },
+    {
+      "kind": "region",
+      "label": "Trust Boundary: Internal Processing",
+      "wraps": ["crawler", "research", "llm"]
+    }
+  ],
+  "connections": [
+    {
+      "id": "user-next",
+      "from": "user",
+      "to": "nextjs",
+      "label": "HTTPS",
+      "variant": "emphasis"
+    },
+    {
+      "id": "auth-verify",
+      "from": "jwt-auth",
+      "to": "express",
+      "label": "verify JWT",
+      "variant": "security",
+      "fromSide": "right",
+      "toSide": "top"
+    },
+    {
+      "id": "next-api",
+      "from": "nextjs",
+      "to": "express",
+      "label": "REST + SSE"
+    },
+    {
+      "id": "api-pipeline",
+      "from": "express",
+      "to": "pipeline",
+      "label": "POST /kits",
+      "variant": "emphasis"
+    },
+    {
+      "id": "api-db",
+      "from": "express",
+      "to": "mongodb",
+      "label": "Mongoose",
+      "fromSide": "bottom",
+      "toSide": "top"
+    },
+    {
+      "id": "pipeline-crawler",
+      "from": "pipeline",
+      "to": "crawler",
+      "label": "crawl",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "pipeline-llm",
+      "from": "pipeline",
+      "to": "llm",
+      "label": "LLM calls",
+      "labelDy": 10
+    },
+    {
+      "id": "pipeline-research",
+      "from": "pipeline",
+      "to": "research",
+      "label": "research",
+      "fromSide": "right",
+      "toSide": "left"
+    },
+    {
+      "id": "crawler-sites",
+      "from": "crawler",
+      "to": "company-sites",
+      "label": "HTTP",
+      "variant": "dashed"
+    },
+    {
+      "id": "research-search",
+      "from": "research",
+      "to": "search-apis",
+      "label": "query",
+      "variant": "dashed"
+    },
+    {
+      "id": "vercel-host",
+      "from": "vercel",
+      "to": "nextjs",
+      "label": "hosts",
+      "variant": "dashed",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "vercel-serverless",
+      "from": "vercel",
+      "to": "express",
+      "label": "serverless",
+      "variant": "dashed",
+      "fromSide": "right",
+      "toSide": "bottom"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Primary Flow",
+      "items": [
+        "User submits job description via Next.js frontend",
+        "Express API authenticates request with JWT",
+        "Pipeline orchestrates 11-stage extraction process",
+        "Final kit stored in MongoDB with validation"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Extraction Pipeline",
+      "items": [
+        "Stage 1: Crawl company website (scored BFS)",
+        "Stage 2: Research interview process (DuckDuckGo/SerpApi)",
+        "Stages 3-4: Extract requirements + generate brief (LLM)",
+        "Stages 5-6: Generate questions + flashcards (LLM)",
+        "Stage 7-8: Coverage check + gap fill (deterministic + LLM)",
+        "Stages 9-11: Build schedule + validate + persist"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Security",
+      "items": [
+        "JWT authentication (HS256, 24h expiry)",
+        "SSRF protection on crawler (blocks RFC 1918)",
+        "Input sanitization (XSS prevention)",
+        "Robots.txt compliance",
+        "Rate limiting on external requests"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "Real-time Updates",
+      "items": [
+        "Server-Sent Events stream pipeline progress",
+        "11 named stages emitted as events",
+        "Frontend displays live progress tracker",
+        "Graceful error handling per stage"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "External Dependencies",
+      "items": [
+        "LLM: Google Gemini 1.5 Flash or Groq Llama 3.1",
+        "Search: DuckDuckGo (free) or SerpApi (100/mo)",
+        "Database: MongoDB Atlas (free tier)",
+        "Hosting: Vercel (serverless functions + edge)"
+      ]
+    }
+  ]
+}

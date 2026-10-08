@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "receiptId": "04fb1918-8e7d-4cb1-9783-238cebae381d",
+  "status": "current",
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/Users/aryan/Downloads/SEA/.archify/architecture-prepkit-20261008-132754/candidate.json",
+  "output": "/Users/aryan/Downloads/SEA/.archify/architecture-prepkit-20261008-132754/prepkit.html",
+  "specification": {
+    "sha256": "78697db357fc7b6f1cb92a46140a018194ca592cdbaa5d9315a964b87935d0e8",
+    "bytes": 7826
+  },
+  "artifact": {
+    "sha256": "483542fb0a25549347a11299bb718315f896abfe6101b693789bba05bc61b712",
+    "bytes": 774950
+  }
+}
